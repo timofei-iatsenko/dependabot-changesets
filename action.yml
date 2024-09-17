@@ -46,12 +46,13 @@ runs:
         fetch-depth: "0"
     - uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version: 20
     - name: Dependabot metadata
       id: dependabot-metadata
       uses: dependabot/fetch-metadata@v1
       with:
         github-token: "${{ inputs.github-token }}"
+    - run: echo ${{ github.action_path }}
     - uses: fawazahmed0/action-debug-vscode@main
     - run: node "${{ github.action_path }}/dist/index.js"
       shell: bash
