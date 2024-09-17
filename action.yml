@@ -38,20 +38,21 @@ runs:
   steps:
     - run: echo $GITHUB_WORKSPACE
       shell: bash
-    - uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3
+    - uses: actions/checkout@v4
       with:
         repository: "${{ inputs.repository }}"
         ref: "${{ inputs.branch }}"
         token: "${{ inputs.github-token }}"
         fetch-depth: "0"
-    - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
+    - uses: actions/setup-node@v4
       with:
         node-version: 16
     - name: Dependabot metadata
       id: dependabot-metadata
-      uses: dependabot/fetch-metadata@4de7a6c08ce727a42e0adbbdc345f761a01240ce # v1
+      uses: dependabot/fetch-metadata@v1
       with:
         github-token: "${{ inputs.github-token }}"
+    - uses: fawazahmed0/action-debug-vscode@main
     - run: node "${{ github.action_path }}/dist/index.js"
       shell: bash
       env:
