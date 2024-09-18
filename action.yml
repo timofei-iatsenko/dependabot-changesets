@@ -36,17 +36,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: echo $GITHUB_WORKSPACE
-      shell: bash
-    - uses: actions/checkout@v4
-      with:
-        repository: "${{ inputs.repository }}"
-        ref: "${{ inputs.branch }}"
-        token: "${{ inputs.github-token }}"
-        fetch-depth: "0"
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 20
     - name: Dependabot metadata
       id: dependabot-metadata
       uses: dependabot/fetch-metadata@v1
