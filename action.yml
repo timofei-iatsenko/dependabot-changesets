@@ -55,11 +55,10 @@ runs:
     - run: echo ${{ github.action_path }}
       shell: bash
     - uses: fawazahmed0/action-debug-vscode@main
-    - env:
-        NODE_PATH: '${{ GITHUB_WORKSPACE }}'
     - run: node "${{ github.action_path }}/dist/index.js"
       shell: bash
       env:
+        NODE_PATH: '${{ GITHUB_WORKSPACE }}'
         DEPENDABOT_METADATA: '${{ steps.dependabot-metadata.outputs.updated-dependencies-json }}'
         DEFAULT_SEMVER_UPDATE_TYPE: '${{ inputs.default_semver_update_type }}'
     - run: |
