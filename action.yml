@@ -56,7 +56,7 @@ runs:
       shell: bash
     - uses: fawazahmed0/action-debug-vscode@main
     - env:
-        NODE_PATH: ${{ GITHUB_WORKSPACE }}
+        NODE_PATH: '${{ GITHUB_WORKSPACE }}'
     - run: node "${{ github.action_path }}/dist/index.js"
       shell: bash
       env:
