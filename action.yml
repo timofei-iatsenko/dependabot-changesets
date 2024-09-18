@@ -58,7 +58,7 @@ runs:
     - run: node "${{ github.action_path }}/dist/index.js"
       shell: bash
       env:
-        NODE_PATH: '${{ GITHUB_WORKSPACE }}'
+        NODE_PATH: '${{ env.GITHUB_WORKSPACE }}'
         DEPENDABOT_METADATA: '${{ steps.dependabot-metadata.outputs.updated-dependencies-json }}'
         DEFAULT_SEMVER_UPDATE_TYPE: '${{ inputs.default_semver_update_type }}'
     - run: |
