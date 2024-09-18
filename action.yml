@@ -41,12 +41,10 @@ runs:
       uses: dependabot/fetch-metadata@v1
       with:
         github-token: "${{ inputs.github-token }}"
-    - run: echo ${{ github.action_path }}
-      shell: bash
     - run: node "${{ github.action_path }}/dist/index.js"
       shell: bash
       env:
-        NODE_PATH: '${{ github.workspace }}'
+        NODE_PATH: '${{ github.workspace }}'/node_modules
         DEPENDABOT_METADATA: '${{ steps.dependabot-metadata.outputs.updated-dependencies-json }}'
         DEFAULT_SEMVER_UPDATE_TYPE: '${{ inputs.default_semver_update_type }}'
     - run: |
