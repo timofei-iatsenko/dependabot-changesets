@@ -38,7 +38,7 @@ runs:
   steps:
     - name: Dependabot metadata
       id: dependabot-metadata
-      uses: dependabot/fetch-metadata@v1
+      uses: dependabot/fetch-metadata@v2
       with:
         github-token: "${{ inputs.github-token }}"
     - run: node "${{ github.action_path }}/dist/index.js"
