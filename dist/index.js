@@ -49,163 +49,223 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core = __importStar(__nccwpck_require__(2186));
-const path_1 = __importDefault(__nccwpck_require__(1017));
-const write_1 = __importDefault(__nccwpck_require__(3950));
-const git = __importStar(__nccwpck_require__(9942));
-const get_packages_1 = __nccwpck_require__(8166);
-const read_1 = __importDefault(__nccwpck_require__(1878));
-const config_1 = __nccwpck_require__(3355);
+exports.__esModule = true;
+var core = __importStar(__nccwpck_require__(2186));
+var path_1 = __importDefault(__nccwpck_require__(1017));
+var write_1 = __importDefault(__nccwpck_require__(3950));
+var git = __importStar(__nccwpck_require__(9942));
+var get_packages_1 = __nccwpck_require__(8166);
+var read_1 = __importDefault(__nccwpck_require__(1878));
+var config_1 = __nccwpck_require__(3355);
 function isListablePackage(config, packageJson) {
-    const packageIgnoredInConfig = config.ignore.includes(packageJson.name);
+    var packageIgnoredInConfig = config.ignore.includes(packageJson.name);
     if (packageIgnoredInConfig) {
         return false;
     }
     if (!config.privatePackages.version && packageJson.private) {
         return false;
     }
-    const hasVersionField = !!packageJson.version;
+    var hasVersionField = !!packageJson.version;
     return hasVersionField;
 }
-function run(cwd = process.cwd()) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            core.debug(`Running in current working directory: ${cwd}`);
-            const metadata = process.env.DEPENDABOT_METADATA || "";
-            const updatedDeps = JSON.parse(metadata);
-            if (updatedDeps.length === 0) {
-                console.log("Found no dependencies that have been updated so no changelog will be generated.");
-                return;
+function run(cwd) {
+    if (cwd === void 0) { cwd = process.cwd(); }
+    return __awaiter(this, void 0, void 0, function () {
+        var metadata, updatedDeps_1, supportedEcosystem, packages, packageNames, config_2, baseRef, changedFiles, hasDirectProdDeps, changedPackageJson, changedLockfile, lockfileDirectory_1, updatedDepNames, changedChagesets, changedSummaries_1, changedPackages, listableChanges, changedPackagesNames, type_1, changes, error_1;
+        var _this = this;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 7, , 8]);
+                    core.debug("Running in current working directory: " + cwd);
+                    metadata = process.env.DEPENDABOT_METADATA || "";
+                    updatedDeps_1 = JSON.parse(metadata);
+                    if (updatedDeps_1.length === 0) {
+                        console.log("Found no dependencies that have been updated so no changelog will be generated.");
+                        return [2 /*return*/];
+                    }
+                    supportedEcosystem = updatedDeps_1.every(function (dep) { return dep.packageEcosystem === "npm_and_yarn"; });
+                    if (!supportedEcosystem) {
+                        console.log("Changelogs can only be generated for npm packages. Found: " + updatedDeps_1[0].packageEcosystem);
+                        return [2 /*return*/];
+                    }
+                    return [4 /*yield*/, (0, get_packages_1.getPackages)(cwd)];
+                case 1:
+                    packages = _a.sent();
+                    packageNames = packages.packages.map(function (pkg) { return pkg.packageJson.name; });
+                    core.debug("Found local npm packages: " + packageNames.join(", "));
+                    if (packages.packages.length === 0) {
+                        throw new Error("No packages found. You might have " + packages.tool + " workspaces configured but no packages yet?");
+                    }
+                    return [4 /*yield*/, (0, config_1.read)(cwd, packages)];
+                case 2:
+                    config_2 = _a.sent();
+                    core.debug("Found changesets config at .changeset/config.json");
+                    baseRef = "origin/" + config_2.baseBranch.replace("origin/", "");
+                    return [4 /*yield*/, git.getChangedFilesSince({
+                            cwd: cwd,
+                            ref: baseRef
+                        })];
+                case 3:
+                    changedFiles = _a.sent();
+                    core.debug("Detected changed files: " + changedFiles.join(", "));
+                    hasDirectProdDeps = updatedDeps_1.some(function (dep) { return dep.dependencyType === "direct:production"; });
+                    changedPackageJson = changedFiles.some(function (file) {
+                        return file.endsWith("package.json");
+                    });
+                    changedLockfile = changedFiles.filter(function (file) {
+                        return !file.startsWith(".changeset/") && !file.endsWith("package.json");
+                    })[0];
+                    lockfileDirectory_1 = changedLockfile
+                        ? "/" + path_1["default"].dirname(changedLockfile).replace(".", "")
+                        : "/";
+                    if (!hasDirectProdDeps || !changedPackageJson) {
+                        if (!hasDirectProdDeps) {
+                            console.log("No top-level production dependencies where updated, so no changelog will be generated.");
+                            return [2 /*return*/];
+                        }
+                        else if (!changedPackageJson) {
+                            console.log("No package.json files where changed, so no changelog will be generated.");
+                        }
+                        return [2 /*return*/];
+                    }
+                    updatedDepNames = updatedDeps_1.map(function (dep) { return dep.dependencyName; });
+                    core.debug("Generating changelogs for updated dependencies: " + updatedDepNames.join(", "));
+                    return [4 /*yield*/, (0, read_1["default"])(cwd, baseRef)];
+                case 4:
+                    changedChagesets = _a.sent();
+                    changedSummaries_1 = changedChagesets.map(function (changeset) { return changeset.summary; });
+                    if (changedSummaries_1.length > 0) {
+                        core.debug("Found existing changelogs: " + changedSummaries_1.join(", "));
+                    }
+                    return [4 /*yield*/, git.getChangedPackagesSinceRef({
+                            cwd: cwd,
+                            ref: baseRef,
+                            changedFilePatterns: config_2.changedFilePatterns
+                        })];
+                case 5:
+                    changedPackages = _a.sent();
+                    listableChanges = changedPackages.filter(function (pkg) {
+                        return isListablePackage(config_2, pkg.packageJson);
+                    });
+                    changedPackagesNames = listableChanges.map(function (pkg) { return pkg.packageJson.name; });
+                    if (changedPackagesNames.length === 0) {
+                        console.log("No packages have changed so no changelog will be generated.");
+                        return [2 /*return*/];
+                    }
+                    core.debug("Detected changed packages (since ref: " + config_2.baseBranch + "): " + changedPackagesNames.join(", "));
+                    type_1 = process.env.DEFAULT_SEMVER_UPDATE_TYPE || "patch";
+                    changes = listableChanges.reduce(function (map, pkg) {
+                        var relativePkgDir = path_1["default"].relative(cwd, pkg.dir);
+                        // Dependabot sets the dep.directory to the root of the workspace for monorepos
+                        var packageDeps = updatedDeps_1.filter(function (dep) {
+                            return dep.directory === "/" + relativePkgDir ||
+                                dep.directory === "/" ||
+                                dep.directory === lockfileDirectory_1;
+                        });
+                        if (packageDeps.length === 0) {
+                            console.log("No dependencies where updated for package " + pkg.packageJson.name + " so no changelog will be generated.");
+                            return map;
+                        }
+                        var packages = map.get(packageDeps);
+                        if (packages) {
+                            packages.add(pkg);
+                        }
+                        else {
+                            var packagesSet = new Set();
+                            packagesSet.add(pkg);
+                            map.set(packageDeps, packagesSet);
+                        }
+                        return map;
+                    }, new Map());
+                    return [4 /*yield*/, Promise.all(Array.from(changes).map(function (map) { return __awaiter(_this, void 0, void 0, function () {
+                            var packageDeps, pkgs, packages, releases, pkgNames, packageDepNames, summary, dep, depsSummary, newChangeset;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        packageDeps = map[0], pkgs = map[1];
+                                        packages = Array.from(pkgs);
+                                        releases = packages.map(function (pkg) {
+                                            return {
+                                                name: pkg.packageJson.name,
+                                                type: type_1
+                                            };
+                                        });
+                                        pkgNames = packages.map(function (pkg) { return pkg.packageJson.name; });
+                                        packageDepNames = packageDeps.map(function (dep) { return dep.dependencyName; });
+                                        core.debug("Detected updated package dependencies for package " + pkgNames.join(", ") + ": " + packageDepNames.join(", "));
+                                        if (packageDeps.length === 1) {
+                                            dep = packageDeps[0];
+                                            summary = "Bump " + dep["dependencyName"] + " from " + dep["prevVersion"] + " to " + dep["newVersion"];
+                                        }
+                                        else {
+                                            depsSummary = packageDeps
+                                                .map(function (dep) {
+                                                var dependencyName = dep.dependencyName, prevVersion = dep.prevVersion, newVersion = dep.newVersion;
+                                                return "- " + dependencyName + " from " + prevVersion + " to " + newVersion;
+                                            })
+                                                .join("\n");
+                                            summary = "Bump dependencies:\n" + depsSummary;
+                                        }
+                                        if (!!changedSummaries_1.includes(summary)) return [3 /*break*/, 2];
+                                        newChangeset = {
+                                            summary: summary,
+                                            releases: releases
+                                        };
+                                        console.log("Creating changelog for package(s) " + pkgNames.join(", ") + " with summary \"" + summary + "\".");
+                                        return [4 /*yield*/, (0, write_1["default"])(newChangeset, cwd)];
+                                    case 1:
+                                        _a.sent();
+                                        core.debug(JSON.stringify(newChangeset));
+                                        return [3 /*break*/, 3];
+                                    case 2:
+                                        console.log("Changelog already exists for package(s) " + pkgNames.join(", ") + " with summary \"" + summary + "\".");
+                                        _a.label = 3;
+                                    case 3: return [2 /*return*/];
+                                }
+                            });
+                        }); }))];
+                case 6:
+                    _a.sent();
+                    return [3 /*break*/, 8];
+                case 7:
+                    error_1 = _a.sent();
+                    if (error_1 instanceof Error)
+                        core.setFailed(error_1.message);
+                    return [3 /*break*/, 8];
+                case 8: return [2 /*return*/];
             }
-            const supportedEcosystem = updatedDeps.every((dep) => dep.packageEcosystem === "npm_and_yarn");
-            if (!supportedEcosystem) {
-                console.log(`Changelogs can only be generated for npm packages. Found: ${updatedDeps[0].packageEcosystem}`);
-                return;
-            }
-            const packages = yield (0, get_packages_1.getPackages)(cwd);
-            const packageNames = packages.packages.map((pkg) => pkg.packageJson.name);
-            core.debug(`Found local npm packages: ${packageNames.join(", ")}`);
-            if (packages.packages.length === 0) {
-                throw new Error(`No packages found. You might have ${packages.tool} workspaces configured but no packages yet?`);
-            }
-            const config = yield (0, config_1.read)(cwd, packages);
-            core.debug(`Found changesets config at .changeset/config.json`);
-            const baseRef = `origin/${config.baseBranch.replace("origin/", "")}`;
-            const changedFiles = yield git.getChangedFilesSince({
-                cwd,
-                ref: baseRef,
-            });
-            core.debug(`Detected changed files: ${changedFiles.join(", ")}`);
-            const hasDirectProdDeps = updatedDeps.some((dep) => dep.dependencyType === "direct:production");
-            const changedPackageJson = changedFiles.some((file) => file.endsWith("package.json"));
-            // Attempt to find the root of the workspace if it's not in the top-level directory from the lockfile if present
-            const changedLockfile = changedFiles.filter((file) => !file.startsWith(".changeset/") && !file.endsWith("package.json"))[0];
-            const lockfileDirectory = changedLockfile
-                ? `/${path_1.default.dirname(changedLockfile).replace(".", "")}`
-                : "/";
-            if (!hasDirectProdDeps || !changedPackageJson) {
-                if (!hasDirectProdDeps) {
-                    console.log("No top-level production dependencies where updated, so an empty changelog will be generated.");
-                }
-                else if (!changedPackageJson) {
-                    console.log("No package.json files where changed, so an empty changelog will be generated.");
-                }
-                const emptyChangeset = {
-                    summary: "",
-                    releases: [],
-                };
-                yield (0, write_1.default)(emptyChangeset, cwd);
-                return;
-            }
-            const updatedDepNames = updatedDeps.map((dep) => dep.dependencyName);
-            core.debug(`Generating changelogs for updated dependencies: ${updatedDepNames.join(", ")}`);
-            const changedChagesets = yield (0, read_1.default)(cwd, baseRef);
-            const changedSummaries = changedChagesets.map((changeset) => changeset.summary);
-            if (changedSummaries.length > 0) {
-                core.debug(`Found existing changelogs: ${changedSummaries.join(", ")}`);
-            }
-            const changedPackages = yield git.getChangedPackagesSinceRef({
-                cwd,
-                ref: baseRef,
-                changedFilePatterns: config.changedFilePatterns,
-            });
-            const listableChanges = changedPackages.filter((pkg) => isListablePackage(config, pkg.packageJson));
-            const changedPackagesNames = listableChanges.map((pkg) => pkg.packageJson.name);
-            if (changedPackagesNames.length === 0) {
-                console.log("No packages have changed so no changelog will be generated.");
-                return;
-            }
-            core.debug(`Detected changed packages (since ref: ${config.baseBranch}): ${changedPackagesNames.join(", ")}`);
-            const type = process.env.DEFAULT_SEMVER_UPDATE_TYPE || "patch";
-            const changes = listableChanges.reduce((map, pkg) => {
-                const relativePkgDir = path_1.default.relative(cwd, pkg.dir);
-                // Dependabot sets the dep.directory to the root of the workspace for monorepos
-                const packageDeps = updatedDeps.filter((dep) => dep.directory === `/${relativePkgDir}` ||
-                    dep.directory === "/" ||
-                    dep.directory === lockfileDirectory);
-                if (packageDeps.length === 0) {
-                    console.log(`No dependencies where updated for package ${pkg.packageJson.name} so no changelog will be generated.`);
-                    return map;
-                }
-                const packages = map.get(packageDeps);
-                if (packages) {
-                    packages.add(pkg);
-                }
-                else {
-                    const packagesSet = new Set();
-                    packagesSet.add(pkg);
-                    map.set(packageDeps, packagesSet);
-                }
-                return map;
-            }, new Map());
-            yield Promise.all(Array.from(changes).map((map) => __awaiter(this, void 0, void 0, function* () {
-                const [packageDeps, pkgs] = map;
-                const packages = Array.from(pkgs);
-                const releases = packages.map((pkg) => {
-                    return {
-                        name: pkg.packageJson.name,
-                        type: type,
-                    };
-                });
-                const pkgNames = packages.map((pkg) => pkg.packageJson.name);
-                const packageDepNames = packageDeps.map((dep) => dep.dependencyName);
-                core.debug(`Detected updated package dependencies for package ${pkgNames.join(", ")}: ${packageDepNames.join(", ")}`);
-                let summary;
-                if (packageDeps.length === 1) {
-                    const dep = packageDeps[0];
-                    summary = `Bump ${dep["dependencyName"]} from ${dep["prevVersion"]} to ${dep["newVersion"]}`;
-                }
-                else {
-                    const depsSummary = packageDeps
-                        .map((dep) => {
-                        const { dependencyName, prevVersion, newVersion } = dep;
-                        return `- ${dependencyName} from ${prevVersion} to ${newVersion}`;
-                    })
-                        .join("\n");
-                    summary = `Bump dependencies:\n${depsSummary}`;
-                }
-                if (!changedSummaries.includes(summary)) {
-                    const newChangeset = {
-                        summary,
-                        releases,
-                    };
-                    console.log(`Creating changelog for package(s) ${pkgNames.join(", ")} with summary "${summary}".`);
-                    yield (0, write_1.default)(newChangeset, cwd);
-                    core.debug(JSON.stringify(newChangeset));
-                }
-                else {
-                    console.log(`Changelog already exists for package(s) ${pkgNames.join(", ")} with summary "${summary}".`);
-                }
-            })));
-        }
-        catch (error) {
-            if (error instanceof Error)
-                core.setFailed(error.message);
-        }
+        });
     });
 }
 run();

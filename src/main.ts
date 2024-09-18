@@ -97,18 +97,15 @@ async function run(cwd = process.cwd()): Promise<void> {
     if (!hasDirectProdDeps || !changedPackageJson) {
       if (!hasDirectProdDeps) {
         console.log(
-          "No top-level production dependencies where updated, so an empty changelog will be generated."
+          "No top-level production dependencies where updated, so no changelog will be generated."
         );
+        return;
       } else if (!changedPackageJson) {
         console.log(
-          "No package.json files where changed, so an empty changelog will be generated."
+          "No package.json files where changed, so no changelog will be generated."
         );
       }
-      const emptyChangeset: Changeset = {
-        summary: "",
-        releases: [],
-      };
-      await writeChangeset(emptyChangeset, cwd);
+
       return;
     }
 
